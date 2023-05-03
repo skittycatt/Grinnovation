@@ -1,3 +1,9 @@
+
+@font-face {
+  font-family: 'Lato';
+  src: 'https://fonts.googleapis.com/css?family=Lato';
+}
+
 .card {
   border: 1px solid #dfdfdf;
   border-radius: 5px;
@@ -12,4 +18,27 @@
 
 .card .card-body {
   flex: 1; /* added */
+}
+
+body {
+  font-size: 16px;
+  padding-bottom: 90vh;
+}
+
+h1 {
+  font-size: 50px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+p {
+  font-size: 16px;
 }

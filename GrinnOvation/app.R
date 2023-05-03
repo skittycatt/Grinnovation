@@ -115,8 +115,7 @@ ui <- fluidPage(
                       p("This is the alumni profiles page.")
              ),
              tabPanel("Student Opinions",
-                      h1("Student Opinions"),
-                      p("This is the student opinions page.")
+                      includeHTML("student_opinions.html")
              ),
              tabPanel("Mentored Advanced Projects (MAP)",
                       h1("Mentored Advanced Projects (MAP)"),
