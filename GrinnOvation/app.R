@@ -16,6 +16,9 @@ library(plotly)
 library(readxl)
 library(rjson)
 library(dplyr)
+library(tidyr)
+
+source("alumni_cards.R")
 
 # Add resource path for 'www' folder
 addResourcePath("www", "www")
