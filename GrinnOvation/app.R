@@ -7,6 +7,7 @@ if (!require("readxl")) install.packages("readxl")
 if (!require("rjson")) install.packages("rjson")
 if (!require("dplyr")) install.packages("dplyr")
 if (!require("tidyr")) install.packages("tidyr")
+if (!require("shinyglide")) install.packages("shinyglide")
 
 # Load necessary packages
 library(shiny)
@@ -17,6 +18,7 @@ library(readxl)
 library(rjson)
 library(dplyr)
 library(tidyr)
+library(shinyglide)
 
 source("alumni_cards.R")
 
@@ -97,7 +99,37 @@ ui <- fluidPage(
              tabPanel("Home",
                       h1("Welcome to the Home Page"),
                       p("This is the home page."),
-                      actionButton("btn", "Click me")
+                      #actionButton("btn", "Click me"),
+                      glide(
+                        height = "350px",
+                        screen(
+                          img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "300px")
+                        ),
+                        screen(
+                          img(src = "DAR Tie dye event.jpeg", height = "300px")
+                        ),
+                        screen(
+                          img(src = "foodbazzar_ISA_website.jpeg", height = "400px", width = "100%")
+                        ),
+                        screen(
+                          img(src = "gallery_offlags_ISA_website.jpeg", height = "300px", width = "100%")
+                        ),
+                        screen(
+                          img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "500px", width = "100%")
+                        ),
+                        screen(
+                          img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "500px", width = "100%")
+                        ),
+                        screen(
+                          img(src = "Softball.EvanHein_snb.jpg", height = "500px", width = "100%")
+                        ),
+                        screen(
+                          img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "500px", width = "100%")
+                        ),
+                        screen(
+                          img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "500px", width = "100%")
+                        )
+                      )
              ),
              tabPanel("About",
                       h1("About Us"),
@@ -129,8 +161,14 @@ ui <- fluidPage(
 
 # Define server logic
 server <- function(input, output, session) {
+  
   output$sankey_plot <- renderPlotly({
     fig
+  })
+  
+  output$slickr <- renderSlickR({
+    imgs <- list.files("carousal_photos/", pattern=".jpeg", full.names = TRUE)
+    slickR(imgs)
   })
 }
 
