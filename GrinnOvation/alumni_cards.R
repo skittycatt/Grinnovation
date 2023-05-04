@@ -75,18 +75,13 @@ generateAlumniCards <- function() {
   )
   
   cards <- lapply(alumni_list, function(alumnus) {
-    column(
-      width = 4,
       div(
-        class = "card",
-        div(
-          class = "card-body",
+        class = "grid-item",
           h5(class = "card-title", paste(alumnus$name, "(", alumnus$year, ")")),
           h6(class = "card-subtitle mb-2 text-muted", alumnus$subtitle),
           p(class = "card-text", alumnus$blurb)
-        )
       )
-    )
+    
   })
   
   return(cards)
