@@ -4,21 +4,18 @@
   src: 'https://fonts.googleapis.com/css?family=Lato';
 }
 
-.card {
-  border: 1px solid #dfdfdf;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 100%; /* added */
-  display: flex; /* added */
-  flex-direction: column; /* added */
-  justify-content: space-between; /* added */
+.grid-container {
+  display:grid;
+  grid-template-columns: repeat( auto-fit, minmax(300px, 1fr) );
+  gap: 10px 10px;
 }
 
-.card .card-body {
-  flex: 1; /* added */
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
 }
+
 
 body {
   font-size: 16px;

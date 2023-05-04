@@ -109,10 +109,9 @@ ui <- fluidPage(
              ),
              tabPanel("Alumni Profiles",
                       h1("Alumni Profiles"),
-                      fluidRow(
-                        generateAlumniCards()
-                      ),
-                      p("This is the alumni profiles page.")
+                      div(class="grid-container", generateAlumniCards()),
+                      br(),
+                      p("Alumni profiles created and compiled by the Grinnell College Office of Admissions.")
              ),
              tabPanel("Student Opinions",
                       includeHTML("student_opinions.html")
