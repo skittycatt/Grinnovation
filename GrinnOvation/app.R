@@ -164,10 +164,6 @@ server <- function(input, output, session) {
     fig
   })
   
-  output$slickr <- renderSlickR({
-    imgs <- list.files("carousal_photos/", pattern=".jpeg", full.names = TRUE)
-    slickR(imgs)
-  })
 }
 
 # Run the application
