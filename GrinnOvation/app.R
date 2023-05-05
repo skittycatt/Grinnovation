@@ -98,36 +98,62 @@ ui <- fluidPage(
   navbarPage("GrinnOvation",
              tabPanel("Home",
                       h1("Welcome to the Home Page"),
-                      p("This is the home page."),
                       #actionButton("btn", "Click me"),
                       glide(
-                        height = "350px",
+                        height = "100%",
                         screen(
-                          img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "300px")
+                          div(style="text-align: center",
+                            img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "100%"),
+                          ),
+                          p("ISO Cultural Evening")
                         ),
                         screen(
-                          img(src = "DAR Tie dye event.jpeg", height = "300px")
+                          div(style="text-align: center",
+                            img(src = "DAR Tie dye event.jpeg", height = "100%", align='center'),
+                          ),
+                          p("DAR Tie Dye")
                         ),
                         screen(
-                          img(src = "foodbazzar_ISA_website.jpeg", height = "400px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "foodbazzar_ISA_website.jpeg", height = "100%", align='center'),
+                          ),
+                          p("ISO Food Bazzar")
                         ),
                         screen(
-                          img(src = "gallery_offlags_ISA_website.jpeg", height = "300px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "gallery_offlags_ISA_website.jpeg", height = "100%", align='center'),
+                          ),
+                          p("Gallery of Flags at Spencer Grill")
                         ),
                         screen(
-                          img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "500px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "100%"),
+                          ),
+                          p("Latin American Ensemble")
                         ),
                         screen(
-                          img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "500px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "100%"),
+                          ),
+                          p("Pedal Grinnell")
                         ),
                         screen(
-                          img(src = "Softball.EvanHein_snb.jpg", height = "500px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "Softball.EvanHein_snb.jpg", height = "100%"),
+                          ),
+                          p("Grinnell Softball")
                         ),
                         screen(
-                          img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "500px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "100%"),
+                          ),
+                          p("Grinnell Women's Soccer")
                         ),
                         screen(
-                          img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "500px", width = "100%")
+                          div(style="text-align: center",
+                            img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "100%"),
+                          ),
+                          p("Zimbabwean Mbira Ensemble")
                         )
                       )
              ),
@@ -158,6 +184,9 @@ ui <- fluidPage(
                       p("This is the mentored advanced projects (MAP) page."),
                       # Add Sankey diagram in the MAP tab
                       plotlyOutput("sankey_plot", height = "4800px", width = "100%")
+             ),
+             tabPanel("Donate",
+                      a(href = "https://alumni.grinnell.edu/give", target = "_blank", "Click here to donate")
              )
   )
 )
