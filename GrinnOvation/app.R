@@ -1,4 +1,4 @@
-# Install necessary packages if you don't have them already
+#Install necessary packages if you don't have them already
 if (!require("shiny")) install.packages("shiny")
 if (!require("shinyjs")) install.packages("shinyjs")
 if (!require("shinyWidgets")) install.packages("shinyWidgets")
@@ -33,6 +33,7 @@ grad_school_data <- data %>% filter(outcome == "graduate school")
 
 # Create nodes and links for the Sankey diagram
 majors <- unique(c(grad_school_data$major_1, grad_school_data$major_2))
+majors <- majors[!is.na(majors)]
 grad_degree_fields <- unique(grad_school_data$grad_degree_field)
 node_labels <- c(majors, grad_degree_fields)
 node_color <- c(rep("blue", length(majors)), rep("green", length(grad_degree_fields)))
@@ -41,68 +42,26 @@ node_color <- c(rep("blue", length(majors)), rep("green", length(grad_degree_fie
 link_table <- grad_school_data %>%
   select(major_1, major_2, grad_degree_field) %>%
   gather(key = "major_key", value = "major", -grad_degree_field) %>%
-  filter(!is.na(major), !is.na(grad_degree_field)) %>% # Filter out rows with NA values
+  filter(!is.na(major), !is.na(grad_degree_field)) %>%  # Filter out rows with NA values
   group_by(major, grad_degree_field) %>%
   summarise(value = n()) %>%
   ungroup()
-
-# Vector of bib entries for packages
-packs <- c("shiny", "shinyjs", "shinyWidgets", "plotly",
-    "readxl", "rjson", "dplyr", "tidyr", "shinyglide")
-cites <- c(
-  citation("shiny"),
-  citation("shinyjs"),
-  citation("shinyWidgets"),
-  citation("plotly"),
-  citation("readxl"),
-  citation("rjson"),
-  citation("dplyr"),
-  citation("tidyr"),
-  citation("shinyglide")
-)
-
-# Properly formats citation of a package
-# Input: Package name as string
-# Output: Citation as string
-formatCites <- function(cit) {
-  # Find the index of the given package and pull its bib entry
-  ci <- cites[which(packs == cit)]
-  # Pull the first and last names of all the authors
-  authFirst <- sapply(strsplit(paste(ci$author), "\\s+"), "[[", 1)
-  authLast <- sapply(strsplit(paste(ci$author), "\\s+"), "[[", 2)
-  auths <- c()
-  x <- 1
-  # Append all authors to auth vector in the format LastName FirstInitial.
-  repeat{
-    auths <- append(auths, paste(authLast[x], " ",
-      substring(authFirst[x], 1, 1), ".",
-      sep = ""
-    ))
-    x <- x + 1
-    if (x > length(authFirst)) break
-  }
-  # Collapse the auth vector to a single string
-  auths <- paste0(auths, collapse = ", ")
-  # Paste together the bib chunks in the correct order
-  paste(auths, " (", ci$year, "). ", em(paste(ci$title)), ". R package version ", packageVersion(cit), ", ", a(href = ci$url, ci$url, .noWS = "after"), ".",
-    sep = ""
-  )
-}
 
 major_indices <- match(link_table$major, node_labels) - 1
 grad_degree_field_indices <- match(link_table$grad_degree_field, node_labels) - 1
 
 link_label <- paste(link_table$major, "->", link_table$grad_degree_field)
 
-fig <- plot_ly(
+fig_graduate <- plot_ly(
   type = "sankey",
   domain = list(
-    x =  c(0, 1),
-    y =  c(0, 1)
+    x =  c(0,1),
+    y =  c(0,1)
   ),
   orientation = "h",
   valueformat = ".0f",
   valuesuffix = "TWh",
+  
   node = list(
     label = node_labels,
     color = node_color,
@@ -113,14 +72,15 @@ fig <- plot_ly(
       width = 0.5
     )
   ),
+  
   link = list(
     source = major_indices,
     target = grad_degree_field_indices,
-    value = link_table$value,
+    value =  link_table$value,
     label = link_label
   )
-)
-fig <- fig %>% layout(
+) 
+fig_graduate <- fig_graduate %>% layout(
   title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
   font = list(
     size = 10
@@ -128,6 +88,15 @@ fig <- fig %>% layout(
   xaxis = list(showgrid = F, zeroline = F),
   yaxis = list(showgrid = F, zeroline = F)
 )
+
+# Add checkboxGroupInput for major selection
+select_all_checkbox <- checkboxInput("select_all", "Select All", value = TRUE)
+major_checkboxes <- checkboxGroupInput("major_checkboxes", "Select Majors:", choices = majors, selected = majors, inline = TRUE)
+
+sankey_height <- reactive({
+  n_selected <- length(input$major_checkboxes)
+  return(n_selected * 300)
+})
 
 # Define UI for the application
 ui <- fluidPage(
@@ -139,62 +108,36 @@ ui <- fluidPage(
   navbarPage("GrinnOvation",
              tabPanel("Home",
                       h1("Welcome to the Home Page"),
+                      p("This is the home page."),
                       #actionButton("btn", "Click me"),
                       glide(
-                        height = "100%",
+                        height = "350px",
                         screen(
-                          div(style="text-align: center",
-                            img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "100%"),
-                          ),
-                          p("ISO Cultural Evening")
+                          img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "300px")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "DAR Tie dye event.jpeg", height = "100%", align='center'),
-                          ),
-                          p("DAR Tie Dye")
+                          img(src = "DAR Tie dye event.jpeg", height = "300px")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "foodbazzar_ISA_website.jpeg", height = "100%", align='center'),
-                          ),
-                          p("ISO Food Bazzar")
+                          img(src = "foodbazzar_ISA_website.jpeg", height = "400px", width = "100%")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "gallery_offlags_ISA_website.jpeg", height = "100%", align='center'),
-                          ),
-                          p("Gallery of Flags at Spencer Grill")
+                          img(src = "gallery_offlags_ISA_website.jpeg", height = "300px", width = "100%")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "100%"),
-                          ),
-                          p("Latin American Ensemble")
+                          img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "500px", width = "100%")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "100%"),
-                          ),
-                          p("Pedal Grinnell")
+                          img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "500px", width = "100%")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "Softball.EvanHein_snb.jpg", height = "100%"),
-                          ),
-                          p("Grinnell Softball")
+                          img(src = "Softball.EvanHein_snb.jpg", height = "500px", width = "100%")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "100%"),
-                          ),
-                          p("Grinnell Women's Soccer")
+                          img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "500px", width = "100%")
                         ),
                         screen(
-                          div(style="text-align: center",
-                            img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "100%"),
-                          ),
-                          p("Zimbabwean Mbira Ensemble")
+                          img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "500px", width = "100%")
                         )
                       )
              ),
@@ -223,20 +166,87 @@ ui <- fluidPage(
              tabPanel("Mentored Advanced Projects (MAP)",
                       h1("Mentored Advanced Projects (MAP)"),
                       p("This is the mentored advanced projects (MAP) page."),
+                      select_all_checkbox,
+                      major_checkboxes,
                       # Add Sankey diagram in the MAP tab
-                      plotlyOutput("sankey_plot", height = "4800px", width = "100%")
-             ),
-             tabPanel("Donate",
-                      a(href = "https://alumni.grinnell.edu/give", target = "_blank", "Click here to donate")
+                      plotlyOutput("sankey_plot", height = "auto", width = "100%")
              )
   )
 )
 
 # Define server logic
 server <- function(input, output, session) {
-  output$sankey_plot <- renderPlotly({
-    fig
+  
+  observeEvent(input$select_all, {
+    if (input$select_all) {
+      updateCheckboxGroupInput(session, "major_checkboxes", selected = majors)
+    } else {
+      updateCheckboxGroupInput(session, "major_checkboxes", selected = character(0))
+    }
+    session$sendCustomMessage(type = "sankey_plot_update", message = list())
   })
+  
+  output$sankey_plot <- renderPlotly({
+    selected_majors <- input$major_checkboxes
+    
+    filtered_links <- link_table %>%
+      filter(major %in% selected_majors)
+    
+    if (nrow(filtered_links) > 0) {
+      major_indices <- match(filtered_links$major, node_labels) - 1
+      grad_degree_field_indices <- match(filtered_links$grad_degree_field, node_labels) - 1
+      
+      link_label <- paste(filtered_links$major, "->", filtered_links$grad_degree_field)
+      
+      fig_graduate <- plot_ly(
+        type = "sankey",
+        domain = list(
+          x = c(0, 1),
+          y = c(0, 1)
+        ),
+        orientation = "h",
+        valueformat = ".0f",
+        valuesuffix = "TWh",
+        
+        node = list(
+          label = node_labels,
+          color = node_color,
+          pad = 15,
+          thickness = 15,
+          line = list(
+            color = "black",
+            width = 0.5
+          )
+        ),
+        
+        link = list(
+          source = major_indices,
+          target = grad_degree_field_indices,
+          value = filtered_links$value,
+          label = link_label
+        )
+      ) %>%
+        layout(
+          title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
+          font = list(
+            size = 10
+          ),
+          xaxis = list(showgrid = F, zeroline = F),
+          yaxis = list(showgrid = F, zeroline = F)
+        )
+      
+      # Update height based on the number of selected checkboxes
+      sankey_height <- reactive({
+        n_selected <- length(input$major_checkboxes)
+        return(n_selected * 300)
+      })
+      
+      fig_graduate %>% layout(height = sankey_height())
+    } else {
+      plot_ly() %>% add_annotations(text = "No data to display", showarrow = FALSE, font = list(size = 24))
+    }
+  })
+  
 }
 
 # Run the application
