@@ -1,4 +1,4 @@
-#Install necessary packages if you don't have them already
+# Install necessary packages if you don't have them already
 if (!require("shiny")) install.packages("shiny")
 if (!require("shinyjs")) install.packages("shinyjs")
 if (!require("shinyWidgets")) install.packages("shinyWidgets")
@@ -41,10 +41,53 @@ node_color <- c(rep("blue", length(majors)), rep("green", length(grad_degree_fie
 link_table <- grad_school_data %>%
   select(major_1, major_2, grad_degree_field) %>%
   gather(key = "major_key", value = "major", -grad_degree_field) %>%
-  filter(!is.na(major), !is.na(grad_degree_field)) %>%  # Filter out rows with NA values
+  filter(!is.na(major), !is.na(grad_degree_field)) %>% # Filter out rows with NA values
   group_by(major, grad_degree_field) %>%
   summarise(value = n()) %>%
   ungroup()
+
+# Vector of bib entries for packages
+packs <- c("shiny", "shinyjs", "shinyWidgets", "plotly",
+    "readxl", "rjson", "dplyr", "tidyr", "shinyglide")
+cites <- c(
+  citation("shiny"),
+  citation("shinyjs"),
+  citation("shinyWidgets"),
+  citation("plotly"),
+  citation("readxl"),
+  citation("rjson"),
+  citation("dplyr"),
+  citation("tidyr"),
+  citation("shinyglide")
+)
+
+# Properly formats citation of a package
+# Input: Package name as string
+# Output: Citation as string
+formatCites <- function(cit) {
+  # Find the index of the given package and pull its bib entry
+  ci <- cites[which(packs == cit)]
+  # Pull the first and last names of all the authors
+  authFirst <- sapply(strsplit(paste(ci$author), "\\s+"), "[[", 1)
+  authLast <- sapply(strsplit(paste(ci$author), "\\s+"), "[[", 2)
+  auths <- c()
+  x <- 1
+  # Append all authors to auth vector in the format LastName FirstInitial.
+  repeat{
+    auths <- append(auths, paste(authLast[x], " ",
+      substring(authFirst[x], 1, 1), ".",
+      sep = ""
+    ))
+    x <- x + 1
+    if (x > length(authFirst)) break
+  }
+  # Collapse the auth vector to a single string
+  auths <- paste0(auths, collapse = ", ")
+  # Paste together the bib chunks in the correct order
+  paste(auths, " (", ci$year, "). ", em(paste(ci$title)), ". R package version ", packageVersion(cit), ", ", a(href = ci$url, ci$url, .noWS = "after"), ".",
+    sep = ""
+  )
+}
 
 major_indices <- match(link_table$major, node_labels) - 1
 grad_degree_field_indices <- match(link_table$grad_degree_field, node_labels) - 1
@@ -54,13 +97,12 @@ link_label <- paste(link_table$major, "->", link_table$grad_degree_field)
 fig <- plot_ly(
   type = "sankey",
   domain = list(
-    x =  c(0,1),
-    y =  c(0,1)
+    x =  c(0, 1),
+    y =  c(0, 1)
   ),
   orientation = "h",
   valueformat = ".0f",
   valuesuffix = "TWh",
-  
   node = list(
     label = node_labels,
     color = node_color,
@@ -71,14 +113,13 @@ fig <- plot_ly(
       width = 0.5
     )
   ),
-  
   link = list(
     source = major_indices,
     target = grad_degree_field_indices,
-    value =  link_table$value,
+    value = link_table$value,
     label = link_label
   )
-) 
+)
 fig <- fig %>% layout(
   title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
   font = list(
@@ -193,11 +234,9 @@ ui <- fluidPage(
 
 # Define server logic
 server <- function(input, output, session) {
-  
   output$sankey_plot <- renderPlotly({
     fig
   })
-  
 }
 
 # Run the application
