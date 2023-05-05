@@ -47,8 +47,10 @@ link_table <- grad_school_data %>%
   ungroup()
 
 # Vector of bib entries for packages
-packs <- c("shiny", "shinyjs", "shinyWidgets", "plotly",
-    "readxl", "rjson", "dplyr", "tidyr", "shinyglide")
+packs <- c(
+  "shiny", "shinyjs", "shinyWidgets", "plotly",
+  "readxl", "rjson", "dplyr", "tidyr", "shinyglide"
+)
 cites <- c(
   citation("shiny"),
   citation("shinyjs"),
@@ -136,70 +138,151 @@ ui <- fluidPage(
     tags$script(src = "www/custom.js"),
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
-  navbarPage("GrinnOvation",
-             tabPanel("Home",
-                      h1("Welcome to the Home Page"),
-                      p("This is the home page."),
-                      #actionButton("btn", "Click me"),
-                      glide(
-                        height = "350px",
-                        screen(
-                          img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "300px")
-                        ),
-                        screen(
-                          img(src = "DAR Tie dye event.jpeg", height = "300px")
-                        ),
-                        screen(
-                          img(src = "foodbazzar_ISA_website.jpeg", height = "400px", width = "100%")
-                        ),
-                        screen(
-                          img(src = "gallery_offlags_ISA_website.jpeg", height = "300px", width = "100%")
-                        ),
-                        screen(
-                          img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "500px", width = "100%")
-                        ),
-                        screen(
-                          img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "500px", width = "100%")
-                        ),
-                        screen(
-                          img(src = "Softball.EvanHein_snb.jpg", height = "500px", width = "100%")
-                        ),
-                        screen(
-                          img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "500px", width = "100%")
-                        ),
-                        screen(
-                          img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "500px", width = "100%")
-                        )
-                      )
-             ),
-             tabPanel("About",
-                      h1("About Us"),
-                      p("The purpose of GrinnOvation is to show Innovation at Grinnell mainly directed towards our Alumni audience. 
-                        Here we link innovation to the different activities Grinnell college students do whilst in college 
-                        like(Maps, and Student Orgs) and after graduating. GrinnOvation puts an effort into displaying student 
-                        opinion so that our users can get an idea of how it feels like to be a student here. As GrinnOvation our 
+  navbarPage(
+    "GrinnOvation",
+    tabPanel(
+      "Home",
+      h1("Welcome to the Home Page"),
+      p("This is the home page."),
+      glide(
+        height = "350px",
+        screen(
+          img(src = "cultural_evening_Int_stu_Affairs_website.jpg", height = "300px")
+        ),
+        screen(
+          img(src = "DAR Tie dye event.jpeg", height = "300px")
+        ),
+        screen(
+          img(src = "foodbazzar_ISA_website.jpeg", height = "400px", width = "100%")
+        ),
+        screen(
+          img(src = "gallery_offlags_ISA_website.jpeg", height = "300px", width = "100%")
+        ),
+        screen(
+          img(src = "LatinAmericanEnsembele_by_Ohana_Sarvotham_snb.jpeg", height = "500px", width = "100%")
+        ),
+        screen(
+          img(src = "paul_hansen_snb_pedal_grinnell.jpg", height = "500px", width = "100%")
+        ),
+        screen(
+          img(src = "Softball.EvanHein_snb.jpg", height = "500px", width = "100%")
+        ),
+        screen(
+          img(src = "WSOC_Champ_by_Tali_Berk_snb.jpeg", height = "500px", width = "100%")
+        ),
+        screen(
+          img(src = "Zimbabwean_Mbira_ensemble_by_Owen_barbato_snb.jpeg", height = "500px", width = "100%")
+        )
+      )
+    ),
+    tabPanel(
+      "About",
+      h1("About Us"),
+      p("The purpose of GrinnOvation is to show Innovation at Grinnell mainly directed towards our Alumni audience.
+                        Here we link innovation to the different activities Grinnell college students do whilst in college
+                        like(Maps, and Student Orgs) and after graduating. GrinnOvation puts an effort into displaying student
+                        opinion so that our users can get an idea of how it feels like to be a student here. As GrinnOvation our
                         goal is not to persuade Alumni to donate rather we’re trying to show the Alumni, a problem or concern student
                         have and provide the Alumni with information on how they can get that donated.")
-             ),
-             tabPanel("Design Process",
-                      h1("Design Process"),
-                      p("This is the design process page.")
-             ),
-             tabPanel("Alumni Profiles",
-                      h1("Alumni Profiles"),
-                      div(class="grid-container", generateAlumniCards()),
-                      br(),
-                      p("Alumni profiles created and compiled by the Grinnell College Office of Admissions.")
-             ),
-             tabPanel("Student Opinions",
-                      includeHTML("student_opinions.html")
-             ),
-             tabPanel("Mentored Advanced Projects (MAP)",
-                      h1("Mentored Advanced Projects (MAP)"),
-                      p("This is the mentored advanced projects (MAP) page."),
-                      # Add Sankey diagram in the MAP tab
-                      plotlyOutput("sankey_plot", height = "4800px", width = "100%")
-             )
+    ),
+    tabPanel(
+      "Design Process",
+      h1("Design Process"),
+      p("This is the design process page.")
+    ),
+    tabPanel(
+      "Alumni Profiles",
+      h1("Alumni Profiles"),
+      div(class = "grid-container", generateAlumniCards()),
+      br(),
+      p("Alumni profiles created and compiled by the Grinnell College Office of Admissions.")
+    ),
+    tabPanel(
+      "Student Opinions",
+      includeHTML("student_opinions.html")
+    ),
+    tabPanel(
+      "Mentored Advanced Projects (MAP)",
+      h1("Mentored Advanced Projects (MAP)"),
+      p("This is the mentored advanced projects (MAP) page."),
+      # Add Sankey diagram in the MAP tab
+      plotlyOutput("sankey_plot", height = "4800px", width = "100%")
+    ),
+    tabPanel(
+      "Acknowledgements",
+      tags$style( # Set lists to use bullets
+        "ol { list-style:disc; }
+              ul { list-style:disc; }"
+      ),
+      column(
+        7,
+        h2("Citations and Acknowledgements"),
+        hr(),
+        h3("Photo Resources"),
+        tags$ul(
+          tags$li(
+            "Cultural Evening. Grinnell College Office of Student Affairs, ",
+            a(
+              href = "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations",
+              "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations"
+            )
+          ),
+          tags$li(
+            "Food Bazaar. Grinnell College Office of Student Affairs, ",
+            a(
+              href = "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations",
+              "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations"
+            )
+          ),
+          tags$li("Tie Dye. Grinnell College Office of Development and Alumni Relations, ",
+            a(href = "https://alumni.grinnell.edu/events", "https://alumni.grinnell.edu/events"
+          )),
+          tags$li("Softball Swing. Evan Hein, ",
+            a(href = "https://thesandb.com/43027/article/softball-matches-nationally-ranked-coe-college-in-doubleheader/",
+            "https://thesandb.com/43027/article/softball-matches-nationally-ranked-coe-college-in-doubleheader/"
+          )),
+          tags$li("Mbira Ensemble. Owen Barbato, ",
+            a(href = "https://thesandb.com/43017/article/spotlight-on-zimbabwean-mbira-ensemble/",
+            "https://thesandb.com/43017/article/spotlight-on-zimbabwean-mbira-ensemble/"
+          )),
+          tags$li("Pedal Grinnell. Paul Hansen, ",
+            a(href = "https://thesandb.com/42972/article/photo-gallery-pedal-grinnell-opens-for-spring-season/",
+            "https://thesandb.com/42972/article/photo-gallery-pedal-grinnell-opens-for-spring-season/"
+          )),
+          tags$li("Latin American Ensemble. Ohana Sarvotham, ",
+            a(href = "https://thesandb.com/42896/article/spotlight-on-latin-american-ensemble/",
+            "https://thesandb.com/42896/article/spotlight-on-latin-american-ensemble/"
+          ))
+        ),
+        h3("Packages"),
+        tags$ol(
+          tags$li(HTML(formatCites("shinyjs"))),
+          tags$li(HTML(formatCites("shiny"))),
+          tags$li(HTML(formatCites("shinyWidgets"))),
+          tags$li(HTML(formatCites("plotly"))),
+          tags$li(HTML(formatCites("readxl"))),
+          tags$li(HTML(formatCites("tidyr"))),
+          tags$li(HTML(formatCites("shinyglide"))),
+          tags$li(HTML(formatCites("dplyr")))
+        ),
+        h3("Additional Resources"),
+        tags$ul(
+          tags$li("Our peers, class mentor, and professor"),
+          tags$li("Jackson, Daniel.", em("The Essence of Software: Why Concepts Matter for Great Design."), "Princeton University Press, 2021."),
+          tags$li(p(
+            "Moran, Tom.", em("System Design."), "Dimensions of Evaluation for User-System Performance,",
+            a(
+              href = "http://www.chilton-computing.org.uk/acd/literature/books/mi/p04.htm#c4p4",
+              "http://www.chilton-computing.org.uk/acd/literature/books/mi/p04.htm#c4p4"
+            ))),
+          tags$li("Code for formatting package citation taken from Jade's individual project.")
+        ), offset = 1
+      ),
+      tags$script(
+        HTML("var header = $('.navbar > .container-fluid');
+                              header.append('<div style=\"float:right; padding-top:12px;\"><a href=\"https://alumni.grinnell.edu/give\">Donate</a></div>')")
+      )
+    )
   )
 )
 
