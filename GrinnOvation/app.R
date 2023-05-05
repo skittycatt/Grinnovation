@@ -133,7 +133,12 @@ ui <- fluidPage(
              ),
              tabPanel("About",
                       h1("About Us"),
-                      p("This is the about page.")
+                      p("The purpose of GrinnOvation is to show Innovation at Grinnell mainly directed towards our Alumni audience. 
+                        Here we link innovation to the different activities Grinnell college students do whilst in college 
+                        like(Maps, and Student Orgs) and after graduating. GrinnOvation puts an effort into displaying student 
+                        opinion so that our users can get an idea of how it feels like to be a student here. As GrinnOvation our 
+                        goal is not to persuade Alumni to donate rather we’re trying to show the Alumni, a problem or concern student
+                        have and provide the Alumni with information on how they can get that donated.")
              ),
              tabPanel("Design Process",
                       h1("Design Process"),
