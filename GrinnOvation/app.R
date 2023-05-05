@@ -187,32 +187,45 @@ ui <- fluidPage(
     ),
     tabPanel(
       "About",
-      h1("About Us"),
-      p("The purpose of GrinnOvation is to show Innovation at Grinnell mainly directed towards our Alumni audience.
+      column(9,
+        h1("About Us"),
+        hr(),
+        p("The purpose of GrinnOvation is to show Innovation at Grinnell mainly directed towards our Alumni audience.
                         Here we link innovation to the different activities Grinnell college students do whilst in college
                         like(Maps, and Student Orgs) and after graduating. GrinnOvation puts an effort into displaying student
                         opinion so that our users can get an idea of how it feels like to be a student here. As GrinnOvation our
                         goal is not to persuade Alumni to donate rather we’re trying to show the Alumni, a problem or concern student
-                        have and provide the Alumni with information on how they can get that donated.")
+                        have and provide the Alumni with information on how they can get that donated."),
+        offset = 1
+      )
     ),
     tabPanel(
       "Design Process",
-      h1("Design Process"),
-      p("This is the design process page.")
+      column(9,
+        h1("Design Process"),
+        hr(),
+        p("This is the design process page."),
+        offset = 1
+      )
     ),
     tabPanel(
       "Alumni Profiles",
       h1("Alumni Profiles"),
+      hr(),
       div(class = "grid-container", generateAlumniCards()),
       br(),
       p("Alumni profiles created and compiled by the Grinnell College Office of Admissions.")
     ),
     tabPanel(
       "Student Opinions",
-      includeHTML("student_opinions.html")
+      column(9,
+        includeHTML("student_opinions.html"),
+        offset = 1
+      )
     ),
     tabPanel(
       "Mentored Advanced Projects (MAP)",
+      hr(),
       p("This is the mentored advanced projects (MAP) page."),
       checkboxGroupInput("major_checkboxes", "Select Major(s):",
         choices = c("Select All", majors),
@@ -229,59 +242,9 @@ ui <- fluidPage(
               ul { list-style:disc; }"
       ),
       column(
-        7,
-        h2("Citations and Acknowledgements"),
-        hr(),
-        h3("Photo Resources"),
-        tags$ul(
-          tags$li(
-            "Cultural Evening. Grinnell College Office of Student Affairs, ",
-            a(
-              href = "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations",
-              "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations"
-            )
-          ),
-          tags$li(
-            "Food Bazaar. Grinnell College Office of Student Affairs, ",
-            a(
-              href = "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations",
-              "https://www.grinnell.edu/about/leadership/offices-services/student-affairs/oisa/student-organizations"
-            )
-          ),
-          tags$li(
-            "Tie Dye. Grinnell College Office of Development and Alumni Relations, ",
-            a(href = "https://alumni.grinnell.edu/events", "https://alumni.grinnell.edu/events")
-          ),
-          tags$li(
-            "Softball Swing. Evan Hein, ",
-            a(
-              href = "https://thesandb.com/43027/article/softball-matches-nationally-ranked-coe-college-in-doubleheader/",
-              "https://thesandb.com/43027/article/softball-matches-nationally-ranked-coe-college-in-doubleheader/"
-            )
-          ),
-          tags$li(
-            "Mbira Ensemble. Owen Barbato, ",
-            a(
-              href = "https://thesandb.com/43017/article/spotlight-on-zimbabwean-mbira-ensemble/",
-              "https://thesandb.com/43017/article/spotlight-on-zimbabwean-mbira-ensemble/"
-            )
-          ),
-          tags$li(
-            "Pedal Grinnell. Paul Hansen, ",
-            a(
-              href = "https://thesandb.com/42972/article/photo-gallery-pedal-grinnell-opens-for-spring-season/",
-              "https://thesandb.com/42972/article/photo-gallery-pedal-grinnell-opens-for-spring-season/"
-            )
-          ),
-          tags$li(
-            "Latin American Ensemble. Ohana Sarvotham, ",
-            a(
-              href = "https://thesandb.com/42896/article/spotlight-on-latin-american-ensemble/",
-              "https://thesandb.com/42896/article/spotlight-on-latin-american-ensemble/"
-            )
-          )
-        ),
-        h3("Packages"),
+        9,
+        includeHTML("acknowledgements.html"),
+        h2("Packages"),
         tags$ol(
           tags$li(HTML(formatCites("shinyjs"))),
           tags$li(HTML(formatCites("shiny"))),
@@ -291,19 +254,6 @@ ui <- fluidPage(
           tags$li(HTML(formatCites("tidyr"))),
           tags$li(HTML(formatCites("shinyglide"))),
           tags$li(HTML(formatCites("dplyr")))
-        ),
-        h3("Additional Resources"),
-        tags$ul(
-          tags$li("Our peers, class mentor, and professor"),
-          tags$li("Jackson, Daniel.", em("The Essence of Software: Why Concepts Matter for Great Design."), "Princeton University Press, 2021."),
-          tags$li(p(
-            "Moran, Tom.", em("System Design."), "Dimensions of Evaluation for User-System Performance,",
-            a(
-              href = "http://www.chilton-computing.org.uk/acd/literature/books/mi/p04.htm#c4p4",
-              "http://www.chilton-computing.org.uk/acd/literature/books/mi/p04.htm#c4p4"
-            )
-          )),
-          tags$li("Code for formatting package citation taken from Jade's individual project.")
         ),
         offset = 1
       ),
@@ -317,7 +267,7 @@ ui <- fluidPage(
 
 # Define server logic
 server <- function(input, output, session) {
-  
+
   observeEvent(input$select_all, {
     if (input$select_all) {
       updateCheckboxGroupInput(session, "major_checkboxes", selected = majors)
