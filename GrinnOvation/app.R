@@ -277,74 +277,68 @@ server <- function(input, output, session) {
     session$sendCustomMessage(type = "sankey_plot_update", message = list())
   })
 
-  # Calculate the height based on the number of selected majors
-  height_sankey <- reactive({
-    n_majors_selected <- length(input$major_checkboxes)
-    if ("Select All" %in% input$major_checkboxes) {
-      n_majors_selected <- length(majors)
-    }
-    # Set a base height and add extra height per major
-    height_base <- 300
-    height <- height_base * n_majors_selected
-    return(paste0(height, "px"))
-  })
-
-  # Update the plotlyOutput height using the height_sankey reactive variable
   output$sankey_plot <- renderPlotly({
-    req(input$major_checkboxes) # Ensure that the input is available
-
     selected_majors <- input$major_checkboxes
-    if ("Select All" %in% selected_majors) {
-      selected_majors <- majors
-    }
-
-    filtered_link_table <- link_table %>% filter(major %in% selected_majors)
-
-    major_indices_filtered <- match(filtered_link_table$major, node_labels) - 1
-    grad_degree_field_indices_filtered <- match(filtered_link_table$grad_degree_field, node_labels) - 1
-
-    fig_graduate_filtered <- plot_ly(
-      type = "sankey",
-      domain = list(
-        x =  c(0, 1),
-        y =  c(0, 1)
-      ),
-      orientation = "h",
-      valueformat = ".0f",
-      valuesuffix = "TWh",
-      node = list(
-        label = node_labels,
-        color = node_color,
-        pad = 15,
-        thickness = 15,
-        line = list(
-          color = "black",
-          width = 0.5
+    
+    filtered_links <- link_table %>%
+      filter(major %in% selected_majors)
+    
+    if (nrow(filtered_links) > 0) {
+      major_indices <- match(filtered_links$major, node_labels) - 1
+      grad_degree_field_indices <- match(filtered_links$grad_degree_field, node_labels) - 1
+      
+      link_label <- paste(filtered_links$major, "->", filtered_links$grad_degree_field)
+      
+      fig_graduate <- plot_ly(
+        type = "sankey",
+        domain = list(
+          x = c(0, 1),
+          y = c(0, 1)
+        ),
+        orientation = "h",
+        valueformat = ".0f",
+        valuesuffix = "TWh",
+        
+        node = list(
+          label = node_labels,
+          color = node_color,
+          pad = 15,
+          thickness = 15,
+          line = list(
+            color = "black",
+            width = 0.5
+          )
+        ),
+        
+        link = list(
+          source = major_indices,
+          target = grad_degree_field_indices,
+          value = filtered_links$value,
+          label = link_label
         )
-      ),
-      link = list(
-        source = major_indices_filtered,
-        target = grad_degree_field_indices_filtered,
-        value = filtered_link_table$value,
-        label = paste(filtered_link_table$major, "->", filtered_link_table$grad_degree_field)
-      )
-    ) %>% layout(
-      title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
-      font = list(
-        size = 10
-      ),
-      xaxis = list(showgrid = F, zeroline = F),
-      yaxis = list(showgrid = F, zeroline = F)
-    )
-
-    fig_graduate_filtered
+      ) %>%
+        layout(
+          title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
+          font = list(
+            size = 10
+          ),
+          xaxis = list(showgrid = F, zeroline = F),
+          yaxis = list(showgrid = F, zeroline = F)
+        )
+      
+      # Update height based on the number of selected checkboxes
+      sankey_height <- reactive({
+        n_selected <- length(input$major_checkboxes)
+        return(n_selected * 300)
+      })
+      
+      fig_graduate %>% layout(height = sankey_height())
+    } else {
+      plot_ly() %>% add_annotations(text = "No data to display", showarrow = FALSE, font = list(size = 24))
+    }
   })
+  
 
-  # Observe changes in the height_sankey reactive variable and update the plot's height
-  observe({
-    height <- height_sankey()
-    session$sendCustomMessage(type = "updateHeight", message = list(id = "sankey_plot", height = height))
-  })
 }
 
 # Run the application
