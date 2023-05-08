@@ -194,109 +194,15 @@ ui <- fluidPage(
                         Here we link innovation to the different activities Grinnell college students do whilst in college
                         like(Maps, and Student Orgs) and after graduating. GrinnOvation puts an effort into displaying student
                         opinion so that our users can get an idea of how it feels like to be a student here. As GrinnOvation our
-                        goal is not to persuade Alumni to donate rather we’re trying to show the Alumni, a problem or concern student
+                        goal is not to persuade Alumni to donate rather we're trying to show the Alumni, a problem or concern student
                         have and provide the Alumni with information on how they can get that donated."),
         offset = 1
       )
     ),
     tabPanel(
       "Design Process",
-      column(9,
-        h1("Design Process"),
-        hr(),
-        h3("Initial Prompt"),
-        p("Our design brief was <quote the design brief>. Our initial interpretation of this prompt was to aim to 
-           convince potential donor alumni to donate to student organizations. Our initial plan to fulfill this goal 
-           was to collect information about the multitude of student organizations at Grinnell. We generated a variety 
-           of ideas for data we could collect that would fit different forms of visualization. One of these types of 
-           data would have been qualitative data about the activities of student organizations. Another type would 
-           have been statistics on budget, attendance, cost, community engagement, etc. A major issue with relying on 
-           collecting data from student organizations was the potentially low response rate, and the fact that even a 
-           student in a leadership position might not have robust records of previous years of organization activity, 
-           especially if those statistics weren’t collected in the first place"),
-        p("After meeting with our alumni mentor, Conner Stanfield, we refined our definition of what we would 
-           consider innovative at Grinnell. Conner identified four ways in which he believed Grinnell is unique: 
-           diversity, professor and undergraduate student research opportunities, alumni profiles, and 
-           student-centered programming. For each of these categories he suggested we display relevant data using 
-           either a data visualization or text."),
-        
-        h3("Structuring The Website"),
-        p("One of the challenges of designing a website for this data was making sure a user could navigate it 
-           easily. Ideally, a user would be able to quickly identify the series of steps needed in order to find the 
-           information they were interested in. In order to make the structure of the website predictable, we planned 
-           to separate each topic into subcategories. Professor research could be divided by department, student 
-           organization data could be divided by area of involvement, etc. These subcategories could be navigated by 
-           a sidebar with anchor links. Since this is a very common way of organizing a website, we believed it would 
-           be familiar enough that users could easily navigate the site, as well as providing enough of a guide to 
-           other categories of data that a user could explore unfamiliar topics. We decided to have all of the 
-           sections on one page so a user could use ctrl + F to search without our implementing a search function. 
-           An image carousel on the home page would serve to direct users to various pages."),
-        
-        h3("Reconsidering Student Data"),
-        p("Given the quantity of students at Grinnell, we decided that it would not be feasible to elicit similarly 
-           structured data from all student organizations. Therefore, we narrowed our focus for student opinion to ask
-           about each of the areas identified by Conner as unique strengths at Grinnell. In order to determine what 
-           questions we would ask students, we spoke with Susan Sanning, Director of Social Innovation at Grinnell. 
-           From the conversation with Susan, we decided to shift our project’s tone from encouraging donations to 
-           accurately reflecting student opinion. We put out a survey which identified the four areas of interest to 
-           our topic and asked how each area had affected the student, either positively or negatively."),
-        p("As a result of the new format for our textual data, we adjusted the structure of the student opinion page 
-           to now show the four questions as subsections, with anonymized individual student responses below each 
-           question."),
-        
-        h3("Reconsidering Research Data"),
-        p("In order to address the unique research environment at Grinnell, we collected data from the Registrar 
-           about rates of student participation in Mentored Advanced Project (MAP)/Mentored Introductory Project (MIP).
-           We also collected data about the post-graduation outcomes of MAP/MIP students in order to answer how MAP/MIP
-           participation might impact different majors.Our goal was to depict the flow of MAP/MIP students into their 
-           respective fields. As such, we decided to use a Sankey diagram to illustrate the pathways taken by students
-           in different majors."),
-        p("A major issue with our chosen visualization was that the quantity of majors resulted in an overwhelming, 
-           confusing diagram. The solution the design team generated while discussing data visualization with Vivero 
-           fellows solved this by allowing the user to select/filter by major"),
-        
-        h3("Implementation"),
-        p("Our project morphed and took on many different design forms throughout the initial stages of our project. 
-           Initially, when we were under the original assumption that the goal of our project was to convince alumni 
-           donors to donate to Student Organizations at the college, we envisioned the app to contain multiple data 
-           visualizations on various data from Student Organizations across the college, with these visualizations 
-           appearing on a large “Student Organizations” tab that was navegable via an extensive sidebar. Other tabs 
-           would have included a “Wilson Center” tab explaining the purpose of the Wilson Center at Grinnell along 
-           with corresponding data visualizations, and tabs on a few of the major on-campus events that speak to the 
-           innovation at Grinnell, a “Pioneer Weekend” tab and a “Hack GC” tab. Both of these tabs would be in a 
-           similar format to the others in that it would explain the corresponding event/resource, provide helpful 
-           links and visualizations that help to convey the extent of innovation that it promotes at Grinnell."),
-        p("After identifying the issues with collecting data from Student Organizations and our conversation with 
-           Conner Stanfield we redesigned the structure of our app to align with the overall shift in mission of our 
-           app. Since our goal was no longer to convince alumni to donate to Student Orgs (for which we were 
-           displaying next to no data), we adopted an informative app layout, in lieu of a persuasive one. The tabs 
-           became “Diversity”, “Professor and Undergraduate Student Research Opportunities”, “Alumni Profiles”, and 
-           “Student-Centered Programming” and within each tab we sought to provide simple text that was both 
-           informative and which conveyed the truth about Grinnell, with no need for flashy effects and 
-           visualizations. This manifested in a simple card layout for the “Alumni Profiles” tab which simply briefly 
-           described some of Grinnell’s notable alumni. We kept the idea of an image carousel on the homepage which 
-           served to direct users to different tabs within the app."),
-        p("Further development saw the change of the “Student-Centered Programming” tab to “Student Opinions” in an 
-           attempt to use the few honest responses that we obtained from our survey on Student Organizations at the 
-           college, and the “Professor and Undergraduate Student Research Opportunities” was simplified to a 
-           “Mentored Advanced Projects (MAPS)” page as this is the most Grinnell-specific aspect of research that both
-           highlights innovation at Grinnell and innovation specific to Grinnell. The former tab became the responses 
-           of the Student Organizations to our survey questions, arranged by question and joined by anchor links (so 
-           the user could navigate to the question that most interests them at the top of the page to view the student
-           organizations’ responses) and the latter tab became a large interactive visualization that allows the user
-           to filter and view where students who participate in MAPs at Grinnell end up post-Grinnell. The aim of this
-           latter visualization is both informative and for alumni donors to see the amazing potential and effect a 
-           MAP has on a student’s career, and donate for more MAP funding accordingly."),
-        p("Finally, the image carousel changed to simply provide visual diversity of the different ways that 
-           innovation appears at Grinnell. We decided not to do links because we did not have sufficient time to 
-           provide relevant information for each of the many ways in which innovation appears at Grinnell, but we 
-           wanted to at least showcase, visually, the many outlets of innovation that Grinnell College offers."),
-        
-        h3("Performance Assessment"),
-        p("In order to assess our implementation, the design team reviewed the developers’ code and used the Reactlog 
-          tool to view the reactivity network over the course of a variety of test cases. (Reactlog animation rendered 
-          below?)"),
-        offset = 1
+      column(12,
+        includeHTML("design_process.html")
       )
     ),
     tabPanel(

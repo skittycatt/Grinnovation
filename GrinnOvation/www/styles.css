@@ -25,10 +25,13 @@
   padding-left: 15px;
 }
 
-.designcol {
-  outline-color: black;
-  outline-style: solid;
-  outline-width: 2px;
+.midline {
+  padding-right: 10px;
+  border-right: 1px solid black;
+}
+
+.designhead {
+  text-decoration: underline;
 }
 
 body {
@@ -53,3 +56,4 @@ h3 {
 p {
   font-size: 16px;
 }
+
