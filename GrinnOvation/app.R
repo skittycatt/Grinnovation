@@ -201,10 +201,8 @@ ui <- fluidPage(
     ),
     tabPanel(
       "Design Process",
-      column(9,
-        h1("Design Process"),
-        hr(),
-        p("This is the design process page."),
+      column(11,
+        includeHTML("design_process.html"),
         offset = 1
       )
     ),
