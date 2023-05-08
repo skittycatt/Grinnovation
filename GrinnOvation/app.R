@@ -220,17 +220,13 @@ ui <- fluidPage(
         offset = 1
       )
     ),
-    tabPanel(
-      "Mentored Advanced Projects (MAP)",
-      hr(),
-      p("This is the mentored advanced projects (MAP) page."),
-      checkboxGroupInput("major_checkboxes", "Select Major(s):",
-        choices = c("Select All", majors),
-        selected = "Select All",
-        inline = TRUE
-      ),
-      # Add Sankey diagram in the MAP tab with flexible height
-      plotlyOutput("sankey_plot", height = "auto", width = "100%")
+    tabPanel("Mentored Advanced Projects (MAP)",
+             h1("Mentored Advanced Projects (MAP)"),
+             p("This is the mentored advanced projects (MAP) page."),
+             select_all_checkbox,
+             major_checkboxes,
+             # Add Sankey diagram in the MAP tab
+             plotlyOutput("sankey_plot", height = "auto", width = "100%")
     ),
     tabPanel(
       "Acknowledgements",
