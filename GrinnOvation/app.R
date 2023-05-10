@@ -168,14 +168,7 @@ ui <- fluidPage(
     tabPanel(
       "About",
       column(9,
-        h1("About Us"),
-        hr(),
-        p("The purpose of GrinnOvation is to show Innovation at Grinnell mainly directed towards our Alumni audience.
-                        Here we link innovation to the different activities Grinnell college students do whilst in college
-                        like(Maps, and Student Orgs) and after graduating. GrinnOvation puts an effort into displaying student
-                        opinion so that our users can get an idea of how it feels like to be a student here. As GrinnOvation our
-                        goal is not to persuade Alumni to donate rather we're trying to show the Alumni, a problem or concern student
-                        have and provide the Alumni with information on how they can get that donated."),
+        includeHTML("about.html"),
         offset = 1
       )
     ),
@@ -201,8 +194,16 @@ ui <- fluidPage(
       )
     ),
     tabPanel("Mentored Advanced Projects (MAP)",
+             br(),
              h1("Mentored Advanced Projects (MAP)"),
-             p("This is the mentored advanced projects (MAP) page."),
+             hr(),
+             h2("Curious about MAPs?"),
+             tags$ul(
+               tags$li("What are they?"),
+               tags$li("How do they benefit students?")),
+             div("Find out answers to these questions and more ", 
+                a(href="https://www.grinnell.edu/about/leadership/offices-services/dean/maps", "at this link!")),
+             br(),
              select_all_checkbox,
              major_checkboxes,
              diagram_selector,
