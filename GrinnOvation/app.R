@@ -30,22 +30,52 @@ data <- read_excel("MAP_Outcomes.xlsx")
 
 # Filter rows with outcome as 'graduate school'
 grad_school_data <- data %>% filter(outcome == "graduate school")
+employed_data <- data %>% filter(outcome == "employed")
 
 # Create nodes and links for the Sankey diagram
-majors <- unique(c(grad_school_data$major_1, grad_school_data$major_2))
+majors <- sort(unique(c(employed_data$major_1, employed_data$major_2))) # Updated line
 majors <- majors[!is.na(majors)]
-grad_degree_fields <- unique(grad_school_data$grad_degree_field)
-node_labels <- c(majors, grad_degree_fields)
-node_color <- c(rep("blue", length(majors)), rep("green", length(grad_degree_fields)))
 
-# Create a table of links between major and grad_degree_field
-link_table <- grad_school_data %>%
+graduate_fields <- unique(grad_school_data$grad_degree_field)
+employment_fields <- unique(employed_data$employment_field)
+
+node_labels_employed <- c(majors, employment_fields)
+node_color_employed <- c(rep("blue", length(majors)), rep("green", length(employment_fields)))
+
+node_labels_grad <- c(majors, graduate_fields)
+node_color_grad <- c(rep("blue", length(majors)), rep("red", length(graduate_fields)))
+
+link_table_employed <- employed_data %>%
+  select(major_1, major_2, employment_field) %>%
+  gather(key = "major_key", value = "major", -employment_field) %>%
+  filter(!is.na(major), !is.na(employment_field)) %>% # Filter out rows with NA values
+  group_by(major, employment_field) %>%
+  summarise(value = n()) %>%
+  ungroup()
+
+link_table_grad <- grad_school_data %>%
   select(major_1, major_2, grad_degree_field) %>%
   gather(key = "major_key", value = "major", -grad_degree_field) %>%
   filter(!is.na(major), !is.na(grad_degree_field)) %>% # Filter out rows with NA values
   group_by(major, grad_degree_field) %>%
   summarise(value = n()) %>%
   ungroup()
+
+# Employment
+major_indices_employed <- match(link_table_employed$major, node_labels_employed) - 1
+employment_field_indices <- match(link_table_employed$employment_field, node_labels_employed) - 1
+link_label_employed <- paste(link_table_employed$major, "->", link_table_employed$employment_field)
+
+# Graduate
+major_indices_grad <- match(link_table_grad$major, node_labels_grad) - 1
+graduate_field_indices <- match(link_table_grad$grad_degree_field, node_labels_grad) - 1
+link_label_grad <- paste(link_table_grad$major, "->", link_table_grad$grad_degree_field)
+
+
+# Add checkboxGroupInput for major selection
+select_all_checkbox <- checkboxInput("select_all", "Select All", value = TRUE)
+major_checkboxes <- checkboxGroupInput("major_checkboxes", "Select Majors:", choices = majors, selected = majors, inline = TRUE)
+diagram_selector <- selectInput("diagram_selector", "Select Diagram:", choices = c("Employment Field", "Graduate School Field"), selected = "Employment Field")
 
 # Vector of bib entries for packages
 packs <- c(
@@ -92,60 +122,10 @@ formatCites <- function(cit) {
   )
 }
 
-major_indices <- match(link_table$major, node_labels) - 1
-grad_degree_field_indices <- match(link_table$grad_degree_field, node_labels) - 1
-
-link_label <- paste(link_table$major, "->", link_table$grad_degree_field)
-
-fig_graduate <- plot_ly(
-  type = "sankey",
-  domain = list(
-    x =  c(0, 1),
-    y =  c(0, 1)
-  ),
-  orientation = "h",
-  valueformat = ".0f",
-  valuesuffix = "TWh",
-  node = list(
-    label = node_labels,
-    color = node_color,
-    pad = 15,
-    thickness = 15,
-    line = list(
-      color = "black",
-      width = 0.5
-    )
-  ),
-  link = list(
-    source = major_indices,
-    target = grad_degree_field_indices,
-    value = link_table$value,
-    label = link_label
-  )
-)
-fig_graduate <- fig_graduate %>% layout(
-  title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
-  font = list(
-    size = 10
-  ),
-  xaxis = list(showgrid = F, zeroline = F),
-  yaxis = list(showgrid = F, zeroline = F)
-)
-
-# Add checkboxGroupInput for major selection
-select_all_checkbox <- checkboxInput("select_all", "Select All", value = TRUE)
-major_checkboxes <- checkboxGroupInput("major_checkboxes", "Select Majors:", choices = majors, selected = majors, inline = TRUE)
-
-sankey_height <- reactive({
-  n_selected <- length(input$major_checkboxes)
-  return(n_selected * 300)
-})
-
 # Define UI for the application
 ui <- fluidPage(
   useShinyjs(), # Initialize shinyjs
   tags$head(
-    tags$script(src = "www/custom.js"),
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   navbarPage(
@@ -225,7 +205,7 @@ ui <- fluidPage(
              p("This is the mentored advanced projects (MAP) page."),
              select_all_checkbox,
              major_checkboxes,
-             # Add Sankey diagram in the MAP tab
+             diagram_selector,
              plotlyOutput("sankey_plot", height = "auto", width = "100%")
     ),
     tabPanel(
@@ -257,10 +237,9 @@ ui <- fluidPage(
     )
   )
 )
-
 # Define server logic
 server <- function(input, output, session) {
-
+  
   observeEvent(input$select_all, {
     if (input$select_all) {
       updateCheckboxGroupInput(session, "major_checkboxes", selected = majors)
@@ -269,70 +248,129 @@ server <- function(input, output, session) {
     }
     session$sendCustomMessage(type = "sankey_plot_update", message = list())
   })
-
+  
   output$sankey_plot <- renderPlotly({
-    selected_majors <- input$major_checkboxes
-    
-    filtered_links <- link_table %>%
-      filter(major %in% selected_majors)
-    
-    if (nrow(filtered_links) > 0) {
-      major_indices <- match(filtered_links$major, node_labels) - 1
-      grad_degree_field_indices <- match(filtered_links$grad_degree_field, node_labels) - 1
+    if (input$diagram_selector == "Employment Field") {
+      selected_majors <- input$major_checkboxes
+      filtered_links <- link_table_employed %>%
+        filter(major %in% selected_majors)
       
-      link_label <- paste(filtered_links$major, "->", filtered_links$grad_degree_field)
-      
-      fig_graduate <- plot_ly(
-        type = "sankey",
-        domain = list(
-          x = c(0, 1),
-          y = c(0, 1)
-        ),
-        orientation = "h",
-        valueformat = ".0f",
-        valuesuffix = "TWh",
+      if (nrow(filtered_links) > 0) {
+        major_indices_employed <- match(filtered_links$major, node_labels_employed) - 1
+        employment_field_indices <- match(filtered_links$employment_field, node_labels_employed) - 1
         
-        node = list(
-          label = node_labels,
-          color = node_color,
-          pad = 15,
-          thickness = 15,
-          line = list(
-            color = "black",
-            width = 0.5
-          )
-        ),
+        link_label <- paste(filtered_links$major, "->", filtered_links$employment_field)
         
-        link = list(
-          source = major_indices,
-          target = grad_degree_field_indices,
-          value = filtered_links$value,
-          label = link_label
-        )
-      ) %>%
-        layout(
-          title = "Major to Graduate Degree Field Transitions for Students Pursuing Graduate School",
-          font = list(
-            size = 10
+        fig_employment <- plot_ly(
+          type = "sankey",
+          domain = list(
+            x = c(0, 1),
+            y = c(0, 1)
           ),
-          xaxis = list(showgrid = F, zeroline = F),
-          yaxis = list(showgrid = F, zeroline = F)
-        )
+          orientation = "h",
+          valueformat = ".0f",
+          valuesuffix = "TWh",
+          
+          node = list(
+            label = node_labels_employed,
+            color = node_color_employed,
+            pad = 15,
+            thickness = 15,
+            line = list(
+              color = "black",
+              width = 0.5
+            )
+          ),
+          
+          link = list(
+            source = major_indices_employed,
+            target = employment_field_indices,
+            value = filtered_links$value,
+            label = link_label
+          )
+        ) %>%
+          layout(
+            title = "Major to Employment Field Transitions for Students Pursuing Employment",
+            font = list(
+              size = 10
+            ),
+            xaxis = list(showgrid = F, zeroline = F),
+            yaxis = list(showgrid = F, zeroline = F)
+          )
+        
+        # Update height based on the number of selected checkboxes
+        sankey_height <- reactive({
+          n_selected <- length(input$major_checkboxes)
+          return(n_selected * 300)
+        })
+        fig_employment %>% layout(height = sankey_height())
+      } else {
+        plot_ly() %>% add_annotations(text = "No data to display", showarrow = FALSE, font = list(size = 24))
+      }
+    } 
+    else 
+    {
+      selected_majors_grad <- input$major_checkboxes
+      filtered_links_grad <- link_table_grad %>%
+      filter(major %in% selected_majors_grad)
       
-      # Update height based on the number of selected checkboxes
-      sankey_height <- reactive({
-        n_selected <- length(input$major_checkboxes)
-        return(n_selected * 300)
-      })
-      
-      fig_graduate %>% layout(height = sankey_height())
-    } else {
-      plot_ly() %>% add_annotations(text = "No data to display", showarrow = FALSE, font = list(size = 24))
+      if (nrow(filtered_links_grad) > 0) {
+        major_indices_grad <- match(filtered_links_grad$major, node_labels_grad) - 1
+        graduate_field_indices <- match(filtered_links_grad$grad_degree_field, node_labels_grad) - 1
+        
+        link_label_grad <- paste(filtered_links_grad$major, "->", filtered_links_grad$grad_degree_field)
+        
+        fig_graduate <- plot_ly(
+          type = "sankey",
+          domain = list(
+            x = c(0, 1),
+            y = c(0, 1)
+          ),
+          orientation = "h",
+          valueformat = ".0f",
+          valuesuffix = "TWh",
+          
+          node = list(
+            label = node_labels_grad,
+            color = node_color_grad,
+            pad = 15,
+            thickness = 15,
+            line = list(
+              color = "black",
+              width = 0.5
+            )
+          ),
+          
+          link = list(
+            source = major_indices_grad,
+            target = graduate_field_indices,
+            value = filtered_links_grad$value,
+            label = link_label_grad
+          )
+        ) %>%
+          layout(
+            title = "Major to Graduate Field Transitions for Students Pursuing Graduate School",
+            font = list(
+              size = 10
+            ),
+            xaxis = list(showgrid = F, zeroline = F),
+            yaxis = list(showgrid = F, zeroline = F)
+          )
+        
+        # Update height based on the number of selected checkboxes
+        sankey_height <- reactive({
+          n_selected <- length(input$major_checkboxes)
+          return(n_selected * 300)
+        })
+        fig_graduate %>% layout(height = sankey_height())
+      } else {
+        plot_ly() %>% add_annotations(text = "No data to display", showarrow = FALSE, font = list(size = 24))
+      }
     }
   })
   
-
 }
+
 
 # Run the application
 shinyApp(ui = ui, server = server)
